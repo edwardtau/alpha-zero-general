@@ -12,6 +12,7 @@
     - TicTacToe                             [Yes]
     - Connect4                  [Yes]
     - Gobang                    [Yes]       [Yes]
+    - RTSGame                               [Yes]
 
 """
 
@@ -20,15 +21,15 @@ import unittest
 import Arena
 from MCTS import MCTS
 
-from tictactoe.TicTacToeGame import TicTacToeGame
-from tictactoe.TicTacToePlayers import *
-from tictactoe.keras.NNet import NNetWrapper as TicTacToeKerasNNet
-
 from othello.OthelloGame import OthelloGame
 from othello.OthelloPlayers import *
 from othello.pytorch.NNet import NNetWrapper as OthelloPytorchNNet
 from othello.tensorflow.NNet import NNetWrapper as OthelloTensorflowNNet
 from othello.keras.NNet import NNetWrapper as OthelloKerasNNet
+
+from tictactoe.TicTacToeGame import TicTacToeGame
+from tictactoe.TicTacToePlayers import *
+from tictactoe.keras.NNet import NNetWrapper as TicTacToeKerasNNet
 
 from connect4.Connect4Game import Connect4Game
 from connect4.Connect4Players import *
@@ -39,8 +40,13 @@ from gobang.GobangPlayers import *
 from gobang.keras.NNet import NNetWrapper as GobangKerasNNet
 from gobang.tensorflow.NNet import NNetWrapper as GobangTensorflowNNet
 
+from rts.RTSGame import RTSGame
+from rts.RTSPlayers import *
+from rts.keras.NNet import NNetWrapper as RTSKerasNNet
+
 import numpy as np
 from utils import *
+
 
 class TestAllGames(unittest.TestCase):
 
@@ -76,6 +82,10 @@ class TestAllGames(unittest.TestCase):
     def test_gobang_tensorflow(self):
         self.execute_game_test(GobangGame(), GobangTensorflowNNet)
 
+    def test_rts_keras(self):
+        self.execute_game_test(RTSGame(), RTSKerasNNet)
+
 
 if __name__ == '__main__':
     unittest.main()
+
