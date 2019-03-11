@@ -3,8 +3,11 @@ from othello.OthelloGame import OthelloGame as Game
 from othello.pytorch.NNet import NNetWrapper as nn
 from utils import *
 
+import cProfile
+
+
 args = dotdict({
-    'numIters': 1000,
+    'numIters': 1,
     'numEps': 100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
@@ -15,7 +18,7 @@ args = dotdict({
 
     'checkpoint': './temp/',
     'load_model': False,
-    'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
+    'load_folder_file': ('./pretrained_models/othello/pytorch/','8x8_100checkpoints_best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
 
 })
@@ -31,4 +34,6 @@ if __name__ == "__main__":
     if args.load_model:
         print("Load trainExamples from file")
         c.loadTrainExamples()
-    c.learn()
+
+    cProfile.run("c.learn()", "temp/profile_stats")
+
