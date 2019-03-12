@@ -21,12 +21,11 @@ class Board():
     def __init__(self, n, state=None):
         self.n = n
         if state is None:
-            self.inital_state()
+            self.initial_state()
         else:
             self.pieces = np.copy(state)
 
-
-    def inital_state(self):
+    def initial_state(self):
         "Set up initial board configuration."
         # Create the empty board array.
         self.pieces = [None] * self.n
@@ -34,15 +33,16 @@ class Board():
             self.pieces[i] = [0] * self.n
 
         # Set up the initial 4 pieces.
-        self.pieces[int(self.n / 2) - 1][int(self.n / 2)] = 1
-        self.pieces[int(self.n / 2)][int(self.n / 2) - 1] = 1
-        self.pieces[int(self.n / 2) - 1][int(self.n / 2) - 1] = -1;
-        self.pieces[int(self.n / 2)][int(self.n / 2)] = -1;
+        center_x = int(self.n / 2)
+        center_y = int(self.n / 2)
+        self.pieces[center_x - 1][center_y    ] = 1
+        self.pieces[center_x    ][center_y - 1] = 1
+        self.pieces[center_x - 1][center_y - 1] = -1;
+        self.pieces[center_x    ][center_y    ] = -1;
 
-
-    # add [][] indexer syntax to the Board
-    def __getitem__(self, index):
-        return self.pieces[index]
+    #  1 X  => 2
+    #  0 -  => 1
+    # -1 O  => 0
 
     def count_diff(self, color):
         """Counts the # pieces of the given color
@@ -50,9 +50,9 @@ class Board():
         count = 0
         for y in range(self.n):
             for x in range(self.n):
-                if self[x][y]==color:
+                if self.pieces[x][y] == color:
                     count += 1
-                if self[x][y]==-color:
+                if self.pieces[x][y] == -color:
                     count -= 1
         return count
 
@@ -65,17 +65,17 @@ class Board():
         # Get all the squares with pieces of the given color.
         for y in range(self.n):
             for x in range(self.n):
-                if self[x][y]==color:
-                    newmoves = self.get_moves_for_square((x,y))
-                    moves.update(newmoves)
+                if self.pieces[x][y] == color:
+                    new_moves = self.get_moves_for_square((x, y))
+                    moves.update(new_moves)
         return list(moves)
 
     def has_legal_moves(self, color):
         for y in range(self.n):
             for x in range(self.n):
-                if self[x][y]==color:
-                    newmoves = self.get_moves_for_square((x,y))
-                    if len(newmoves)>0:
+                if self.pieces[x][y] == color:
+                    new_moves = self.get_moves_for_square((x, y))
+                    if len(new_moves) > 0:
                         return True
         return False
 
@@ -89,7 +89,7 @@ class Board():
         (x,y) = square
 
         # determine the color of the piece.
-        color = self[x][y]
+        color = self.pieces[x][y]
 
         # skip empty source squares.
         if color==0:
@@ -119,31 +119,29 @@ class Board():
                  for flip in self._get_flips(move, direction, color)]
         assert len(list(flips))>0
         for x, y in flips:
-            self[x][y] = color
-
+            self.pieces[x][y] = color
 
     def _discover_move(self, origin, direction):
         """ Returns the endpoint for a legal move, starting at the given origin,
         moving by the given increment."""
         x, y = origin
-        color = self[x][y]
-        flips = []
+        color = self.pieces[x][y]
+        has_flips = False
 
         x += direction[0]
         y += direction[1]
         while (0 <= x < self.n) and (0 <= y < self.n):
-            if self[x][y] == 0:
-                if flips:
+            if self.pieces[x][y] == 0:
+                if has_flips:
                     return (x, y)
                 else:
                     return None
-            elif self[x][y] == color:
+            elif self.pieces[x][y] == color:
                 return None
-            elif self[x][y] == -color:
-                flips.append((x, y))
+            elif self.pieces[x][y] == -color:
+                has_flips = True
             x += direction[0]
             y += direction[1]
-
 
     def _get_flips(self, origin, direction, color):
         """ Gets the list of flips for a vertex and direction to use with the
@@ -155,11 +153,11 @@ class Board():
         x += direction[0]
         y += direction[1]
         while (0 <= x < self.n) and (0 <= y < self.n):
-            if self[x][y] == 0:
+            if self.pieces[x][y] == 0:
                 return []
-            if self[x][y] == -color:
+            if self.pieces[x][y] == -color:
                 flips.append((x, y))
-            elif self[x][y] == color and len(flips) > 0:
+            elif self.pieces[x][y] == color and len(flips) > 0:
                 return flips
             x += direction[0]
             y += direction[1]
