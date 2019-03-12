@@ -128,20 +128,22 @@ class Board():
         color = self.pieces[x][y]
         has_flips = False
 
-        x += direction[0]
-        y += direction[1]
+        x_direction, y_direction = direction
+        x += x_direction
+        y += y_direction
         while (0 <= x < self.n) and (0 <= y < self.n):
-            if self.pieces[x][y] == 0:
+            current_piece = self.pieces[x][y]
+            if current_piece == 0:
                 if has_flips:
                     return (x, y)
                 else:
                     return None
-            elif self.pieces[x][y] == color:
+            elif current_piece == color:
                 return None
-            elif self.pieces[x][y] == -color:
+            elif current_piece == -color:
                 has_flips = True
-            x += direction[0]
-            y += direction[1]
+            x += x_direction
+            y += y_direction
 
     def _get_flips(self, origin, direction, color):
         """ Gets the list of flips for a vertex and direction to use with the
@@ -150,16 +152,18 @@ class Board():
         flips = [origin]
         x, y = origin
 
-        x += direction[0]
-        y += direction[1]
+        x_direction, y_direction = direction
+        x += x_direction
+        y += y_direction
         while (0 <= x < self.n) and (0 <= y < self.n):
-            if self.pieces[x][y] == 0:
+            current_piece = self.pieces[x][y]
+            if current_piece == 0:
                 return []
-            if self.pieces[x][y] == -color:
+            if current_piece == -color:
                 flips.append((x, y))
-            elif self.pieces[x][y] == color and len(flips) > 0:
+            elif current_piece == color and len(flips) > 0:
                 return flips
-            x += direction[0]
-            y += direction[1]
+            x += x_direction
+            y += y_direction
         return []
 
