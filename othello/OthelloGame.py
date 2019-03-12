@@ -12,10 +12,6 @@ class OthelloGame(Game):
         +1: "O"
     }
 
-    @staticmethod
-    def getSquarePiece(piece):
-        return OthelloGame.square_content[piece]
-
     def __init__(self, n):
         self.n = n
 
@@ -48,8 +44,6 @@ class OthelloGame(Game):
     def getValidMoves(self, board, player):
         # return a fixed size binary vector
         valids = [0]*self.getActionSize()
-        # b = Board(self.n)
-        # b.pieces = np.copy(board)
         b = Board(self.n, board)
 
         legalMoves =  b.get_legal_moves(player)
@@ -63,8 +57,6 @@ class OthelloGame(Game):
     def getGameEnded(self, board, player):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         # player = 1
-        # b = Board(self.n)
-        # b.pieces = np.copy(board)
         b = Board(self.n, board)
 
         if b.has_legal_moves(player):
@@ -103,14 +95,10 @@ class OthelloGame(Game):
         return board_s
 
     def stringRepresentation(self, board):
-        #return board.tostring()
-        return self.stringRepresentationReadable(board)
+        return board.tostring()
 
     def getScore(self, board, player):
-        # b = Board(self.n)
-        # b.pieces = np.copy(board)
         b = Board(self.n, board)
-
         return b.count_diff(player)
 
     @staticmethod
@@ -129,3 +117,4 @@ class OthelloGame(Game):
             print("|")
 
         print("-----------------------")
+
