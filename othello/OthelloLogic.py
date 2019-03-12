@@ -40,10 +40,6 @@ class Board():
         self.pieces[center_x - 1][center_y - 1] = -1;
         self.pieces[center_x    ][center_y    ] = -1;
 
-    #  1 X  => 2
-    #  0 -  => 1
-    # -1 O  => 0
-
     def count_diff(self, color):
         """Counts the # pieces of the given color
         (1 for white, -1 for black, 0 for empty spaces)"""
@@ -86,13 +82,13 @@ class Board():
         of the returned moves is (3,7) because everything from there to (3,4)
         is flipped.
         """
-        (x,y) = square
+        x, y = square
 
         # determine the color of the piece.
         color = self.pieces[x][y]
 
         # skip empty source squares.
-        if color==0:
+        if color == 0:
             return None
 
         # search all possible directions.
@@ -117,7 +113,6 @@ class Board():
         # Add the piece to the empty square.
         flips = [flip for direction in self.__directions
                  for flip in self._get_flips(move, direction, color)]
-        assert len(list(flips))>0
         for x, y in flips:
             self.pieces[x][y] = color
 
@@ -148,7 +143,6 @@ class Board():
     def _get_flips(self, origin, direction, color):
         """ Gets the list of flips for a vertex and direction to use with the
         execute_move function """
-        #initialize variables
         flips = [origin]
         x, y = origin
 
