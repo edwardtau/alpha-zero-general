@@ -41,7 +41,7 @@ class Board():
 
 
     # add [][] indexer syntax to the Board
-`    def __getitem__(self, index):
+    def __getitem__(self, index):
         return self.pieces[index]
 
     def count_diff(self, color):
