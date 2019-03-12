@@ -71,7 +71,7 @@ class OthelloGame(Game):
             return 0
         if b.has_legal_moves(-player):
             return 0
-        if b.countDiff(player) > 0:
+        if b.count_diff(player) > 0:
             return 1
         return -1
 
@@ -111,7 +111,7 @@ class OthelloGame(Game):
         # b.pieces = np.copy(board)
         b = Board(self.n, board)
 
-        return b.countDiff(player)
+        return b.count_diff(player)
 
     @staticmethod
     def display(board):

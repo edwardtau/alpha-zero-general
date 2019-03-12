@@ -41,10 +41,10 @@ class Board():
 
 
     # add [][] indexer syntax to the Board
-    def __getitem__(self, index): 
+`    def __getitem__(self, index):
         return self.pieces[index]
 
-    def countDiff(self, color):
+    def count_diff(self, color):
         """Counts the # pieces of the given color
         (1 for white, -1 for black, 0 for empty spaces)"""
         count = 0
@@ -115,13 +115,12 @@ class Board():
         #follow it on all 8 directions to look for a piece allowing flipping.
 
         # Add the piece to the empty square.
-        # print(move)
         flips = [flip for direction in self.__directions
-                      for flip in self._get_flips(move, direction, color)]
+                 for flip in self._get_flips(move, direction, color)]
         assert len(list(flips))>0
         for x, y in flips:
-            #print(self[x][y],color)
             self[x][y] = color
+
 
     def _discover_move(self, origin, direction):
         """ Returns the endpoint for a legal move, starting at the given origin,
@@ -130,46 +129,39 @@ class Board():
         color = self[x][y]
         flips = []
 
-        for x, y in Board._increment_move(origin, direction, self.n):
+        x += direction[0]
+        y += direction[1]
+        while (0 <= x < self.n) and (0 <= y < self.n):
             if self[x][y] == 0:
                 if flips:
-                    # print("Found", x,y)
                     return (x, y)
                 else:
                     return None
             elif self[x][y] == color:
                 return None
             elif self[x][y] == -color:
-                # print("Flip",x,y)
                 flips.append((x, y))
+            x += direction[0]
+            y += direction[1]
+
 
     def _get_flips(self, origin, direction, color):
         """ Gets the list of flips for a vertex and direction to use with the
         execute_move function """
         #initialize variables
         flips = [origin]
+        x, y = origin
 
-        for x, y in Board._increment_move(origin, direction, self.n):
-            #print(x,y)
+        x += direction[0]
+        y += direction[1]
+        while (0 <= x < self.n) and (0 <= y < self.n):
             if self[x][y] == 0:
                 return []
             if self[x][y] == -color:
                 flips.append((x, y))
             elif self[x][y] == color and len(flips) > 0:
-                #print(flips)
                 return flips
-
+            x += direction[0]
+            y += direction[1]
         return []
-
-    @staticmethod
-    def _increment_move(move, direction, n):
-        # print(move)
-        """ Generator expression for incrementing moves """
-        move = list(map(sum, zip(move, direction)))
-        #move = (move[0]+direction[0], move[1]+direction[1])
-        while all(map(lambda x: 0 <= x < n, move)): 
-        #while 0<=move[0] and move[0]<n and 0<=move[1] and move[1]<n:
-            yield move
-            move=list(map(sum,zip(move,direction)))
-            #move = (move[0]+direction[0],move[1]+direction[1])
 
