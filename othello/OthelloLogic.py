@@ -35,10 +35,10 @@ class Board():
         # Set up the initial 4 pieces.
         center_x = int(self.n / 2)
         center_y = int(self.n / 2)
-        self.pieces[center_x - 1][center_y    ] = 1
-        self.pieces[center_x    ][center_y - 1] = 1
-        self.pieces[center_x - 1][center_y - 1] = -1;
-        self.pieces[center_x    ][center_y    ] = -1;
+        self.pieces[center_x - 1][center_y    ] = +1
+        self.pieces[center_x    ][center_y - 1] = +1
+        self.pieces[center_x - 1][center_y - 1] = -1
+        self.pieces[center_x    ][center_y    ] = -1
 
     def count_diff(self, color):
         """Counts the # pieces of the given color
