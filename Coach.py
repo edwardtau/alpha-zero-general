@@ -75,7 +75,7 @@ class Coach():
             print('------ITER ' + str(i) + '------')
             self.executeSimulation(i)
             self.executeTraining()
-            self.executeEvaluation()
+            self.executeEvaluation(i)
 
     def executeSimulation(self, i):
         # examples of the iteration
@@ -123,7 +123,7 @@ class Coach():
         self.nnet.train(trainExamples)
         self.nmcts = MCTS(self.game, self.nnet, self.args)
 
-    def executeEvaluation(self):
+    def executeEvaluation(self, i):
         print('PITTING AGAINST PREVIOUS VERSION')
         arena = Arena(lambda x: np.argmax(self.pmcts.getActionProb(x, temp=0)),
                       lambda x: np.argmax(self.nmcts.getActionProb(x, temp=0)), self.game)
