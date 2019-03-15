@@ -11,7 +11,7 @@ from torchvision import datasets, transforms
 from torch.autograd import Variable
 
 class OthelloNNet(nn.Module):
-    fully_connected_layer_width = 512
+    fully_connected_layer_width = 1024
 
     def __init__(self, game, args):
         # game params
