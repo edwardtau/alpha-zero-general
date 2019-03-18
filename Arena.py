@@ -73,44 +73,28 @@ class Arena():
         eps = 0
         maxeps = int(num)
 
-        num = int(num/2)
-        oneWon = 0
-        twoWon = 0
-        draws = 0
-        for _ in range(num):
-            gameResult = self.playGame(verbose=verbose)
-            if gameResult==1:
-                oneWon+=1
-            elif gameResult==-1:
-                twoWon+=1
-            else:
-                draws+=1
+        template = '({eps}/{maxeps}) Eps Time: {et:.3f}s | Total: {total:} | ETA: {eta:} | Score: {one}/{two}/{draw}'
+
+        player_one_first = True
+        scoring = {1: 0, -1: 0, 0: 0}  # Number of games player one has won, lost, and tied.
+
+        for _ in range(maxeps):
+            result = self.playGame(verbose=verbose)
+            if not player_one_first:
+                result *= -1 # Flip if player one is not going first.
+            scoring[result] += 1
+
             # bookkeeping + plot progress
             eps += 1
             eps_time.update(time.time() - end)
             end = time.time()
-            bar.suffix  = '({eps}/{maxeps}) Eps Time: {et:.3f}s | Total: {total:} | ETA: {eta:}'.format(eps=eps+1, maxeps=maxeps, et=eps_time.avg,
-                                                                                                       total=bar.elapsed_td, eta=bar.eta_td)
+            bar.suffix  = template.format(eps=eps+1, maxeps=maxeps, et=eps_time.avg, total=bar.elapsed_td, eta=bar.eta_td,
+                                          one=scoring[1], two=scoring[-1], draw=scoring[0])
             bar.next()
 
-        self.player1, self.player2 = self.player2, self.player1
-        
-        for _ in range(num):
-            gameResult = self.playGame(verbose=verbose)
-            if gameResult==-1:
-                oneWon+=1                
-            elif gameResult==1:
-                twoWon+=1
-            else:
-                draws+=1
-            # bookkeeping + plot progress
-            eps += 1
-            eps_time.update(time.time() - end)
-            end = time.time()
-            bar.suffix  = '({eps}/{maxeps}) Eps Time: {et:.3f}s | Total: {total:} | ETA: {eta:}'.format(eps=eps+1, maxeps=num, et=eps_time.avg,
-                                                                                                       total=bar.elapsed_td, eta=bar.eta_td)
-            bar.next()
-            
+            # Swap players' order (toggling who plays first).
+            player_one_first = not player_one_first
+            self.player1, self.player2 = self.player2, self.player1
         bar.finish()
 
-        return oneWon, twoWon, draws
+        return tuple(scoring.values())
