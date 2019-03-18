@@ -11,7 +11,6 @@ from torchvision import datasets, transforms
 from torch.autograd import Variable
 
 class OthelloNNet(nn.Module):
-    fully_connected_layer_width = 1024
 
     def __init__(self, game, args):
         # game params
@@ -30,10 +29,10 @@ class OthelloNNet(nn.Module):
         self.bn3 = nn.BatchNorm2d(args.num_channels)
         self.bn4 = nn.BatchNorm2d(args.num_channels)
 
-        self.fc1 = nn.Linear(args.num_channels*(self.board_x-4)*(self.board_y-4), self.fully_connected_layer_width)
-        self.fc_bn1 = nn.BatchNorm1d(self.fully_connected_layer_width)
+        self.fc1 = nn.Linear(args.num_channels*(self.board_x-4)*(self.board_y-4), args.fully_connected_layer_width)
+        self.fc_bn1 = nn.BatchNorm1d(args.fully_connected_layer_width)
 
-        self.fc2 = nn.Linear(self.fully_connected_layer_width, 512)
+        self.fc2 = nn.Linear(args.fully_connected_layer_width, 512)
         self.fc_bn2 = nn.BatchNorm1d(512)
 
         self.fc3 = nn.Linear(512, self.action_size)
