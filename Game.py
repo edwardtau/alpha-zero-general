@@ -8,6 +8,13 @@ class Game():
 
     See othello/OthelloGame.py for an example implementation.
     """
+
+    # Game status
+    WON_PLAYER1 = 1
+    WON_PLAYER2 = -1
+    STALEMATE   = 0
+    IN_PROGRESS = 2
+
     def __init__(self):
         pass
 
@@ -59,16 +66,15 @@ class Game():
         """
         pass
 
-    def getGameEnded(self, board, player):
+    def getGameStatus(self, board, player):
         """
         Input:
             board: current board
             player: current player (1 or -1)
 
         Returns:
-            r: 0 if game has not ended. 1 if player won, -1 if player lost,
-               small non-zero value for draw.
-               
+            Game Status: [WON_PLAYER1, WON_PLAYER2, STALEMATE, IN_PROGRESS]
+
         """
         pass
 

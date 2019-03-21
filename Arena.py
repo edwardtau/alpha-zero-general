@@ -1,4 +1,5 @@
 import numpy as np
+import Game
 from pytorch_classification.utils import Bar, AverageMeter
 import time
 
@@ -29,15 +30,13 @@ class Arena():
 
         Returns:
             either
-                winner: player who won the game (1 if player1, -1 if player2)
-            or
-                draw result returned from the game that is neither 1, -1, nor 0.
+                winner: player who won the game (1 if player1, -1 if player2) or 0 for stalemate
         """
         players = [self.player2, None, self.player1]
         curPlayer = 1
         board = self.game.getInitBoard()
         it = 0
-        while self.game.getGameEnded(board, curPlayer)==0:
+        while self.game.getGameStatus(board, curPlayer) == Game.IN_PROGRESS:
             it+=1
             if verbose:
                 assert(self.display)
@@ -45,17 +44,17 @@ class Arena():
                 self.display(board)
             action = players[curPlayer+1](self.game.getCanonicalForm(board, curPlayer))
 
-            valids = self.game.getValidMoves(self.game.getCanonicalForm(board, curPlayer),1)
+            valids = self.game.getValidMoves(self.game.getCanonicalForm(board, curPlayer), 1)
 
-            if valids[action]==0:
+            if valids[action] == 0:
                 print(action)
-                assert valids[action] >0
+                assert valids[action] > 0
             board, curPlayer = self.game.getNextState(board, curPlayer, action)
         if verbose:
             assert(self.display)
-            print("Game over: Turn ", str(it), "Result ", str(self.game.getGameEnded(board, 1)))
+            print("Game over: Turn ", str(it), "Result ", str(self.game.getGameStatus(board, 1)))
             self.display(board)
-        return self.game.getGameEnded(board, 1)
+        return self.game.getGameStatus(board, 1)
 
     def playGames(self, num, verbose=False):
         """
@@ -65,7 +64,7 @@ class Arena():
         Returns:
             oneWon: games won by player1
             twoWon: games won by player2
-            draws:  games won by nobody
+            draws:  stalemate
         """
         eps_time = AverageMeter()
         bar = Bar('Arena.playGames', max=num)
@@ -76,11 +75,12 @@ class Arena():
         template = '({eps}/{maxeps}) Eps Time: {et:.3f}s | Total: {total:} | ETA: {eta:} | Score: {one}/{two}/{draw}'
 
         player_one_first = True
-        scoring = {1: 0, -1: 0, 0: 0}  # Number of games player one has won, lost, and tied.
+        scoring = {self.game.WON_PLAYER1: 0, self.game.WON_PLAYER2: 0, self.game.STALEMATE: 0}
 
         for _ in range(maxeps):
             result = self.playGame(verbose=verbose)
-            if not player_one_first:
+
+            if result != self.game.STALEMATE and not player_one_first:
                 result *= -1 # Flip if player one is not going first.
             scoring[result] += 1
 
@@ -89,7 +89,8 @@ class Arena():
             eps_time.update(time.time() - end)
             end = time.time()
             bar.suffix  = template.format(eps=eps+1, maxeps=maxeps, et=eps_time.avg, total=bar.elapsed_td, eta=bar.eta_td,
-                                          one=scoring[1], two=scoring[-1], draw=scoring[0])
+                                          one=scoring[self.game.WON_PLAYER1], two=scoring[self.game.WON_PLAYER2],
+                                          draw=scoring[self.game.STALEMATE])
             bar.next()
 
             # Swap players' order (toggling who plays first).
