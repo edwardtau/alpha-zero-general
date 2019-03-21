@@ -1,5 +1,5 @@
 import numpy as np
-import Game
+from Game import Game
 from pytorch_classification.utils import Bar, AverageMeter
 import time
 
