@@ -34,22 +34,20 @@ class Connect4Game(Game):
         "Any zero value in top row in a valid move"
         return self._base_board.with_np_pieces(np_pieces=board).get_valid_moves()
 
-    def getGameEnded(self, board, player):
+    def getGameStatus(self, board, player):
         b = self._base_board.with_np_pieces(np_pieces=board)
         winstate = b.get_win_state()
         if winstate.is_ended:
             if winstate.winner is None:
-                # draw has very little value.
-                return 1e-4
+                return Game.STALEMATE
             elif winstate.winner == player:
-                return +1
+                return Game.WON_PLAYER1
             elif winstate.winner == -player:
-                return -1
+                return Game.WON_PLAYER2
             else:
                 raise ValueError('Unexpected winstate found: ', winstate)
         else:
-            # 0 used to represent unfinished game.
-            return 0
+            return Game.IN_PROGRESS
 
     def getCanonicalForm(self, board, player):
         # Flip player from 1 to -1

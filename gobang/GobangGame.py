@@ -50,7 +50,7 @@ class GobangGame(Game):
         return np.array(valids)
 
     # modified
-    def getGameEnded(self, board, player):
+    def getGameStatus(self, board, player):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         # player = 1
         b = Board(self.n)
@@ -72,8 +72,8 @@ class GobangGame(Game):
                         len(set(board[w + l][h - l] for l in range(n))) == 1):
                     return board[w][h]
         if b.has_legal_moves():
-            return 0
-        return 1e-4
+            return Game.IN_PROGRESS
+        return Game.STALEMATE
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1

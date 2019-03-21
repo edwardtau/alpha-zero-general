@@ -101,59 +101,59 @@ def test_game_ended():
                    [0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0]]), 1, 0),
+                   [0, 0, 0, 0, 0, 0, 0]]), 1, Connect4Game.IN_PROGRESS),
         (np.array([[0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 1, 0],
                    [0, 0, 0, 0, 1, 0, 0],
                    [0, 0, 0, 1, 0, 0, 0],
                    [0, 0, 1, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0]]), 1, 1),
+                   [0, 0, 0, 0, 0, 0, 0]]), 1, Connect4Game.WON_PLAYER1),
         (np.array([[0, 0, 0, 0, 1, 0, 0],
                    [0, 0, 0, 1, 0, 0, 0],
                    [0, 0, 1, 0, 0, 0, 0],
                    [0, 1, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0]]), -1, -1),
+                   [0, 0, 0, 0, 0, 0, 0]]), -1, Connect4Game.WON_PLAYER2),
         (np.array([[0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 1, 0, 0, 0, 0],
                    [0, 0, 0, 1, 0, 0, 0],
                    [0, 0, 0, 0, 1, 0, 0],
-                   [0, 0, 0, 0, 0, 1, 0]]), -1, -1),
+                   [0, 0, 0, 0, 0, 1, 0]]), -1, Connect4Game.WON_PLAYER2),
         (np.array([[0, 0, 0, -1],
                    [0, 0, -1, 0],
                    [0, -1, 0, 0],
-                   [-1, 0, 0, 0]]), 1, -1),
+                   [-1, 0, 0, 0]]), 1, Connect4Game.WON_PLAYER2),
         (np.array([[0, 0, 0, 0, 1],
                    [0, 0, 0, 1, 0],
                    [0, 0, 1, 0, 0],
-                   [0, 1, 0, 0, 0]]), -1, -1),
+                   [0, 1, 0, 0, 0]]), -1, Connect4Game.WON_PLAYER2),
         (np.array([[1, 0, 0, 0, 0],
                    [0, 1, 0, 0, 0],
                    [0, 0, 1, 0, 0],
-                   [0, 0, 0, 1, 0]]), -1, -1),
+                   [0, 0, 0, 1, 0]]), -1, Connect4Game.WON_PLAYER2),
         (np.array([[ 0,  0,  0,  0,  0,  0,  0],
                    [ 0,  0,  0, -1,  0,  0,  0],
                    [ 0,  0,  0, -1,  0,  0,  1],
                    [ 0,  0,  0,  1,  1, -1, -1],
                    [ 0,  0,  0, -1,  1,  1,  1],
-                   [ 0, -1,  0, -1,  1, -1,  1]]), -1, 0),
+                   [ 0, -1,  0, -1,  1, -1,  1]]), -1, Connect4Game.IN_PROGRESS),
         (np.array([[ 0.,  0.,  0.,  0.,  0.,  0.,  0.],
                    [ 0.,  0.,  0., -1.,  0.,  0.,  0.],
                    [ 1.,  0.,  1., -1.,  0.,  0.,  0.],
                    [-1., -1.,  1.,  1.,  0.,  0.,  0.],
                    [ 1.,  1.,  1., -1.,  0.,  0.,  0.],
-                   [ 1., -1.,  1., -1.,  0., -1.,  0.]]), -1, -1),
+                   [ 1., -1.,  1., -1.,  0., -1.,  0.]]), -1, Connect4Game.WON_PLAYER2),
         (np.array([[ 0.,  0.,  0.,  1.,  0.,  0.,  0.,],
                    [ 0.,  0.,  0.,  1.,  0.,  0.,  0.,],
                    [ 0.,  0.,  0., -1.,  0.,  0.,  0.,],
                    [ 0.,  0.,  1.,  1., -1.,  0., -1.,],
                    [ 0.,  0., -1.,  1.,  1.,  1.,  1.,],
-                   [-1.,  0., -1.,  1., -1., -1., -1.,],]), 1, 1),
+                   [-1.,  0., -1.,  1., -1., -1., -1.,],]), 1, Connect4Game.WON_PLAYER1),
         ]
 
-    for np_pieces, player, expected_end_state in array_end_state_pairs:
+    for np_pieces, player, expected_status in array_end_state_pairs:
         board, player, game = init_board_from_array(np_pieces, player)
-        end_state = game.getGameEnded(board, player)
-        assert expected_end_state == end_state, ("expected=%s, actual=%s, board=\n%s" % (expected_end_state, end_state, board))
+        status = game.getGameStatus(board, player)
+        assert expected_status == status, ("expected=%s, actual=%s, board=\n%s" % (expected_status, status, board))
 
 
 def test_immutable_move():
@@ -165,3 +165,4 @@ def test_immutable_move():
 
     assert original_board_string == game.stringRepresentation(board)
     assert original_board_string != game.stringRepresentation(new_np_pieces)
+

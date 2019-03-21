@@ -54,18 +54,19 @@ class OthelloGame(Game):
             valids[self.n*x+y]=1
         return np.array(valids)
 
-    def getGameEnded(self, board, player):
-        # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
-        # player = 1
+    def getGameStatus(self, board, player):
         b = Board(self.n, board)
 
-        if b.has_legal_moves(player):
-            return 0
-        if b.has_legal_moves(-player):
-            return 0
-        if b.count_diff(player) > 0:
-            return 1
-        return -1
+        if b.has_legal_moves(player) or b.has_legal_moves(-player):
+            return Game.IN_PROGRESS
+
+        count_diff = b.count_diff(player)
+        if count_diff == 0:
+            return Game.STALEMATE
+        if count_diff > 0:
+            return Game.WON_PLAYER1
+        else:
+            return Game.WON_PLAYER2
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1

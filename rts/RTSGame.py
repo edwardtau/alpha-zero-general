@@ -1,6 +1,8 @@
 import sys
 from typing import Tuple
 
+sys.path.append('..')
+from Game import Game
 import numpy as np
 
 from rts.src.config_class import CONFIG
@@ -15,12 +17,12 @@ from rts.src.config import NUM_ENCODERS, NUM_ACTS, P_NAME_IDX, A_TYPE_IDX, TIME_
 RTSGame.pyefined rules for RTS game TD2020
 Includes: 
 - init - contains board configuration
-- getGameEnded - contains end game checking
+- getGameStatus- contains end game checking
 """
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic
-class RTSGame:
+class RTSGame(Game):
 
     def __init__(self) -> None:
         self.n = CONFIG.grid_size
@@ -108,7 +110,7 @@ class RTSGame:
         return np.array(valids)
 
     # noinspection PyUnusedLocal
-    def getGameEnded(self, board: np.ndarray, player) -> float:
+    def getGameStatus(self, board: np.ndarray, player) -> float:
         """
         Ok, this function is where it gets complicated...
         See, its  hard to decide when to finish rts game, as players might not have enough time to execute wanted actions, but in the other hand, if players are left to play for too long, games become very long, or even 'infinitely' long
@@ -116,7 +118,7 @@ class RTSGame:
         And the other is using timeout. Timeout just cuts game and evaluates winner using one of 3 elo functions. We've found this one to be more useful, as it can be applied in 3d rts games easier and more sensibly.
         :param board: current game state
         :param player: current player
-        :return: real number on interval [-1,1] - return 0 if not ended, 1 if player 1 won, -1 if player 1 lost, 0.001 if tie
+        :return: real number on interval [-1,1] - return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         """
 
         n = board.shape[0]
@@ -134,8 +136,8 @@ class RTSGame:
                 score_player2 = self.getScore(board, -player)
 
                 if score_player1 == score_player2:
-                    return 0.001
-                better_player = 1 if score_player1 > score_player2 else -1
+                    return Game.STALEMATE
+                better_player = Game.WON_PLAYER1 if score_player1 > score_player2 else Game.WON_PLAYER2
                 return better_player
         else:
             if player == 1:
@@ -144,7 +146,7 @@ class RTSGame:
                 MAX_TIME = CONFIG.player2_config.MAX_TIME
 
             if board[0, 0, TIME_IDX] >= MAX_TIME:
-                return 0.001
+                return Game.STALEMATE
 
         # detect win condition
         sum_p1 = 0
@@ -157,18 +159,18 @@ class RTSGame:
                     sum_p2 += 1
 
         if sum_p1 < 2:  # SUM IS 1 WHEN PLAYER ONLY HAS MINERALS LEFT
-            return -1
+            return Game.WON_PLAYER2
         if sum_p2 < 2:  # SUM IS 1 WHEN PLAYER ONLY HAS MINERALS LEFT
-            return +1
+            return Game.WON_PLAYER1
 
         # detect no valid actions - possible tie by overpopulating on non-attacking units and buildings - all fields are full or one player is surrounded:
         if sum(self.getValidMoves(board, 1)) == 0:
-            return -1
+            return Game.WON_PLAYER2
 
         if sum(self.getValidMoves(board, -1)) == 0:
-            return 1
+            return Game.WON_PLAYER1
         # continue game
-        return 0
+        return Game.IN_PROGRESS
 
     def getCanonicalForm(self, board: np.ndarray, player: int):
         b = np.copy(board)
