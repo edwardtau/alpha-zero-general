@@ -121,3 +121,4 @@ class NNetWrapper(NeuralNet):
         with self.nnet.graph.as_default():
             self.saver = tf.train.Saver()
             self.saver.restore(self.sess, filepath)
+
